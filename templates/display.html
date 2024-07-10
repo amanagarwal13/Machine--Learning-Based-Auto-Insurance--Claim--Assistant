@@ -1,0 +1,433 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Image Comparison Slider</title>
+    <style>
+        /* Your CSS styles */
+        @import url('https://fonts.googleapis.com/css?family=Montserrat:400,800');
+
+        * {
+            box-sizing: border-box;
+        }
+
+       body {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    font-family: 'Montserrat', sans-serif; /* Set the height to fill the entire viewport */
+    margin: 0; /* Remove default margin */
+    background-image: linear-gradient(to right, #ffc3a0 0%, #ffafbd 100%);
+}
+#vanta-canvas{
+            width:100%;
+            height:100%;
+        }
+
+        h1 {
+            text-transform: uppercase;
+            color: #FFFFFF;
+            font-size: 40px;
+            font-weight: bold;
+        }
+
+        h3 {
+            font-weight: lighter;
+            color: #555555;
+        }
+
+        a {
+            position: relative;
+            color: #a8244f;
+            text-decoration: none;
+            &:before {
+                content: "";
+                height: 2px;
+                position: absolute;
+                bottom: -5px;
+                left: 0;
+                right: 0;
+                background-color: darken(#a8244f, 10%);
+                transform: rotateY(90deg);
+                transition: transform 0.2s ease-in-out;
+            }
+            &:hover {
+                color: darken(#a8244f, 10%);
+                text-decoration: none;
+                &:before {
+                    transform: rotateY(0deg);
+                }
+            }
+        }
+
+        .split {
+            display: flex;
+            flex-direction: row;
+            flex-wrap: wrap;
+            justify-content: space-between;
+            align-items: strech;
+            p {
+                flex-basis: 100%;
+                @include media('tabletUpwards') {
+                    flex-basis: 48%;
+                }
+            }
+        }
+
+        nav.social {
+            display: inline-block;
+            padding: 0;
+            margin-bottom: 18px;
+            li {
+                list-style: none;
+                float: left;
+                a {
+                    padding: 5px;
+                }
+                &:first-child a {
+                    padding-left: 0;
+                }
+            }
+        }
+
+.container {
+    position: relative;
+    width: 40%; /* Adjusted width */
+    max-width: 1000px; /* Added max-width */
+    margin: 50px auto; /* Center the container */
+    border-radius: 10px; /* Rounded corners */
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.5); /* Box shadow effect */
+}
+.inner {
+    text-align: center;
+    position: relative;
+    width: 100%;
+    overflow: hidden;
+    box-sizing: border-box;
+    padding: 20px 30px;
+    border-radius: 10px;
+    background-color:rgb(255,255,255,.3);
+}
+
+        .comparison-slider-wrapper {
+	    border-radius: 10px;
+            position: relative;
+            width: 100%;
+            margin: 20px 0;
+            background-color: white;
+            .comparison-slider {
+                position: relative;
+                width: 100%;
+		height: 5%;
+                margin: 0;
+                border: 5px white solid;
+                box-sizing: border-box;
+                > img {
+                    width: 100%;
+                    height: auto;
+                    display: block;
+                }
+                .overlay {
+                    display: none;
+                    position: absolute;
+                    width: 250px;
+                    bottom: 20px;
+                    right: 20px;
+                    background-color: rgba(0, 0, 0, 0.4);
+                    padding: 10px;
+                    box-sizing: border-box;
+                    color: #DDD;
+                    text-align: right;
+                    @include media('tabletUpwards') {
+                        display: block;
+                    }
+                }
+                .resize {
+                    position: absolute;
+                    top: 0;
+                    left: 0;
+                    height: 100%;
+                    width: 50%;
+                    overflow: hidden;
+                    > img {
+                        display: block;
+                    }
+                    .overlay {
+                        right: auto;
+                        left: 20px;
+                        text-align: left;
+                    }
+                }
+                .divider {
+                    position: absolute;
+                    width: 2px;
+                    height: 100%;
+                    background-color: rgba(256, 256, 256, 0.2);
+                    left: 50%;
+                    top: 0;
+                    bottom: 0;
+                    margin-left: -1px;
+                    cursor: ew-resize;
+                    &:before {
+                        content: "";
+                        position: absolute;
+                        width: 20px;
+                        height: 20px;
+                        left: -9px;
+                        top: 50%;
+                        margin-top: -10px;
+                        background-color: white;
+                        transform: rotate(45deg);
+                        transition: all 0.1s ease-in-out;
+                    }
+                    &:after {
+                        content: "";
+                        position: absolute;
+                        width: 12px;
+                        height: 12px;
+                        left: -5px;
+                        top: 50%;
+                        margin-top: -6px;
+                        background-color: white;
+                        transform: rotate(45deg);
+                        transition: all 0.1s ease-in-out;
+                    }
+                    &.draggable {
+                        &:before {
+                            width: 30px;
+                            height: 30px;
+                            left: -14px;
+                            margin-top: -15px;
+                        }
+                        &:after {
+                            width: 20px;
+                            height: 20px;
+                            left: -9px;
+                            margin-top: -10px;
+                            background-color: #555;
+                        }
+                    }
+                }
+            }
+            .caption {
+                position: relative;
+                width: 100%;
+                padding: 10px;
+                box-sizing: border-box;
+                font-size: 12px;
+                font-style: italic;
+            }
+        }
+
+        .suppoprt-me {
+            display: inline-block;
+            position: fixed;
+            bottom: 10px;
+            left: 10px;
+            width: 20vw;
+            max-width: 250px;
+            min-width: 200px;
+            z-index: 9;
+            img {
+                width: 100%;
+                height: auto;
+            }
+        }
+	button {
+            border-radius: 20px;
+
+            background-color: rgb(75,0,0);
+            color: #FFFFFF;
+            font-size: 12px;
+            font-weight: bold;
+            padding: 12px 45px;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            transition: transform 80ms ease-in;
+        }
+
+        button:active {
+            transform: scale(0.95);
+        }
+
+        button:focus {
+            outline: none;
+        }
+
+        button.ghost {
+            background-color: transparent;
+            border-color: #FFFFFF;
+        }
+    #vanta-canvas{
+            width:100%;
+            height:100%;}
+    </style>
+</head>
+<body><div id="vanta-canvas">
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r121/three.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/vanta@latest/dist/vanta.waves.min.js"></script>
+        <script type="text/javascript">
+            VANTA.WAVES({
+                el: "#vanta-canvas",
+                mouseControls: false,
+                touchControls: false,
+                gyroControls: false,
+                minHeight: 2300.00,
+                minWidth: 800.00,
+                scale: 1.00,
+                scaleMobile: 1.00,
+                color: 0x1c1c1c,
+                waveHeight: 10.50,
+                waveSpeed: 1.65,
+                zoom: 0.65
+            });
+        </script>
+    <div class="container">
+        <div class="inner">
+            <h1>Car Views Comparison</h1>
+            <!-- Front View Comparison Slider -->
+            <div class="comparison-slider-wrapper">
+                <div class="comparison-slider">
+                    <div class="overlay">Front View</div>
+                    <img src="{{ url_for('static', filename='front_output.jpg') }}" alt="Front View">
+                    <div class="resize">
+                        <div class="overlay">Before</div>
+                        <img src="{{ url_for('static', filename="front_input.jpg") }}" alt="Front View Before">
+                    </div>
+                    <div class="divider"></div>
+                </div>
+            </div>
+            <!-- Back View Comparison Slider -->
+            <div class="comparison-slider-wrapper">
+                <div class="comparison-slider">
+                    <div class="overlay">Back View</div>
+                    <img src="{{ url_for('static', filename='back_output.jpg') }}" alt="Back View">
+                    <div class="resize">
+                        <div class="overlay">Before</div>
+                        <img src="{{ url_for('static', filename="back_input.jpg") }}" alt="Back View Before">
+                    </div>
+                    <div class="divider"></div>
+                </div>
+            </div>
+            <!-- Right View Comparison Slider -->
+            <div class="comparison-slider-wrapper">
+                <div class="comparison-slider">
+                    <div class="overlay">Right View</div>
+                    <img src="{{ url_for('static', filename='right_output.jpg') }}" alt="Right View">
+                    <div class="resize">
+                        <div class="overlay">Before</div>
+                        <img src="{{ url_for('static', filename="right_input.jpg") }}" alt="Right View Before">
+                    </div>
+                    <div class="divider"></div>
+                </div>
+            </div>
+            <!-- Left View Comparison Slider -->
+            <div class="comparison-slider-wrapper">
+                <div class="comparison-slider">
+                    <div class="overlay">Left View</div>
+                    <img src="{{ url_for('static', filename='left_output.jpg') }}" alt="Left View">
+                    <div class="resize">
+                        <div class="overlay">Before</div>
+                        <img src="{{ url_for('static', filename="left_input.jpg") }}" alt="Left View Before">
+                    </div>
+                    <div class="divider"></div>
+                </div>
+            </div>
+            <!-- Single Download Report Button -->
+            <div class="caption"><button id="button" class="button">Download Report</button></div>
+        </div>
+    </div>
+    <!-- Include jQuery library -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <!-- Include your JavaScript file -->
+    <script>
+        document.getElementById('button').addEventListener('click', function() {
+    // Send a request to the Flask route to download the report
+    window.location.href = '/download_report';
+	});
+        $(document).ready(function() {
+            // If the comparison slider is present on the page lets initialise it
+            if ($(".comparison-slider")[0]) {
+                let compSlider = $(".comparison-slider");
+            
+                // Let's loop through the sliders and initialise each of them
+                compSlider.each(function() {
+                    let compSliderWidth = $(this).width() + "px";
+                    $(this).find(".resize img").css({ width: compSliderWidth });
+                    drags($(this).find(".divider"), $(this).find(".resize"), $(this));
+                });
+            
+                // If the user resizes the windows let's update our variables and resize our images
+                $(window).on("resize", function() {
+                    let compSliderWidth = compSlider.width() + "px";
+                    compSlider.find(".resize img").css({ width: compSliderWidth });
+                });
+            }
+        });
+
+        // Function to handle slider dragging
+        function drags(dragElement, resizeElement, container) {
+            // This creates a variable that detects if the user is using touch input instead of the mouse
+            let touched = false;
+            window.addEventListener('touchstart', function() {
+                touched = true;
+            });
+            window.addEventListener('touchend', function() {
+                touched = false;
+            });
+            
+            // Click the image and move the slider on interaction with the mouse or touch input
+            dragElement.on("mousedown touchstart", function(e) {
+                // Add classes to the elements
+                dragElement.addClass("draggable");
+                resizeElement.addClass("resizable");
+                // Create variables
+                let startX = e.pageX ? e.pageX : e.originalEvent.touches[0].pageX;
+                let dragWidth = dragElement.outerWidth();
+                let posX = dragElement.offset().left + dragWidth - startX;
+                let containerOffset = container.offset().left;
+                let containerWidth = container.outerWidth();
+                let minLeft = containerOffset + 10;
+                let maxLeft = containerOffset + containerWidth - dragWidth - 10;
+                
+                // Add event listener on the divider element
+                dragElement.parents().on("mousemove touchmove", function(e) {
+                    // If the user is not using touch input, let's prevent default to prevent the user from selecting the images as they move the slider around
+                    if (!touched) {
+                        e.preventDefault();
+                    }
+                    let moveX = e.pageX ? e.pageX : e.originalEvent.touches[0].pageX;
+                    let leftValue = moveX + posX - dragWidth;
+
+                    // Stop the divider from going over the limits of the container
+                    if (leftValue < minLeft) {
+                        leftValue = minLeft;
+                    } else if (leftValue > maxLeft) {
+                        leftValue = maxLeft;
+                    }
+
+                    let widthValue = (leftValue + dragWidth / 2 - containerOffset) * 100 / containerWidth + "%";
+
+                    $(".draggable").css("left", widthValue).on("mouseup touchend touchcancel", function() {
+                        $(this).removeClass("draggable");
+                        resizeElement.removeClass("resizable");
+                    });
+                    
+                    $(".resizable").css("width", widthValue);
+                    
+                }).on("mouseup touchend touchcancel", function() {
+                    dragElement.removeClass("draggable");
+                    resizeElement.removeClass("resizable");
+                });
+                
+            }).on("mouseup touchend touchcancel", function(e) {
+                // Stop clicking the image and moving the slider
+                dragElement.removeClass("draggable");
+                resizeElement.removeClass("resizable");
+            });
+        }
+    </script>
+</body>
+</html>
